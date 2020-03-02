@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-import Utils from "./Utils"
 import StationListForm from "./StationListForm"
 import Results from "./Results"
 import _ from "lodash"
@@ -70,6 +69,7 @@ const Bart = () => {
   }
 
   useEffect(() => {
+    console.log("fetchStationlist")
     fetchData(
       `https://api.bart.gov/api/stn.aspx?cmd=stns&key=${CONSTANTS.BART.APIKEY}&json=y`,
       setStationList,
@@ -78,10 +78,12 @@ const Bart = () => {
   }, [])
 
   useEffect(() => {
+      console.log("updateUrlQuery")
     updateUrlQuery(stationList, selectedStartStation, selectedDestStation)
   }, [stationList, selectedStartStation, selectedDestStation])
 
   useEffect(() => {
+    console.log("fetchBartData")
     fetchData(urlQuery, setBartData, "root.schedule.request.trip")
   }, [urlQuery])
 
