@@ -2,7 +2,7 @@ import React from "react"
 
 const StationListForm = ({stationList, onSelect, selected, isStart}) => { 
   return (
-    <select onChange={e => onSelect(e, isStart)}>
+    <select className="station-list-form__list" onChange={e => onSelect(e, isStart)}>
       {stationList.length > 0 &&
         stationList.map(
           (station, index) =>

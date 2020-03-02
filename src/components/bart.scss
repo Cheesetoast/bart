@@ -1,5 +1,14 @@
-.loading-img {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+.bart {
+
+  .result-container {
+    border: 1px solid red;
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+
+  .station-list-form {
+      &__list {
+          margin-right: 10px;
+      }
+  }
 }
