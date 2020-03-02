@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import Utils from "./Utils"
 import StationListForm from "./StationListForm"
 import Results from "./Results"
+import _ from "lodash"
 
 import "./bart.scss"
 
@@ -25,8 +26,6 @@ const Bart = () => {
     "https://api.bart.gov/api/sched.aspx?cmd=depart&b=0&orig=phil&dest=bayf&key=MW9S-E7SL-26DU-VV8V&json=y"
   )
 
-  const formatTime = Utils.formatTime
-
   const updateUrlQuery = (
     stationList,
     selectedStartStation,
@@ -47,37 +46,18 @@ const Bart = () => {
     }).name
   }
 
-  const fetchStationList = () => {
+  const fetchData = (url, hook, objPath) => {
     setIsLoading(true)
-    fetch(
-      `https://api.bart.gov/api/stn.aspx?cmd=stns&key=${CONSTANTS.BART.APIKEY}&json=y`
-    )
-      .then(res => res.json())
-      .then(
-        result => {
-          setStationList(result.root.stations.station)
-          setIsLoading(true)
-          //   console.log("Fetched station list: ", result.root.stations.station)
-        },
-        error => {
-          console.log("ERROR - fetchStationList: ", error)
-        }
-      )
-  }
-
-  const fetchData = url => {
-    setIsLoading(true)
-    console.log("FETCH DATE URL: ", url)
+    console.log("API CALL")
     fetch(url)
       .then(res => res.json())
       .then(
         result => {
-          //  console.log("Fetch result: ", result)
-          setBartData(result)
+          hook(_.get(result, objPath))
           setIsLoading(false)
         },
         error => {
-          console.log(error)
+          console.log("ERROR - fetchData: ", error)
         }
       )
   }
@@ -90,7 +70,11 @@ const Bart = () => {
   }
 
   useEffect(() => {
-    fetchStationList()
+    fetchData(
+      `https://api.bart.gov/api/stn.aspx?cmd=stns&key=${CONSTANTS.BART.APIKEY}&json=y`,
+      setStationList,
+      "root.stations.station"
+    )
   }, [])
 
   useEffect(() => {
@@ -98,8 +82,7 @@ const Bart = () => {
   }, [stationList, selectedStartStation, selectedDestStation])
 
   useEffect(() => {
-    console.log("USE EFFECT - FETCH DATA")
-    fetchData(urlQuery)
+    fetchData(urlQuery, setBartData, "root.schedule.request.trip")
   }, [urlQuery])
 
   return (
@@ -119,12 +102,7 @@ const Bart = () => {
           alt="Loading..."
         />
       ) : (
-        bartData?.root?.schedule.request.trip && (
-          <Results
-            data={bartData.root.schedule.request.trip}
-            getStationName={getStationName}
-          />
-        )
+        bartData && <Results data={bartData} getStationName={getStationName} />
       )}
     </div>
   )
