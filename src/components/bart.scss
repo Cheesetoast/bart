@@ -1,5 +1,4 @@
 .bart {
-
   .result-container {
     border: 1px solid red;
     padding: 15px;
@@ -7,8 +6,30 @@
   }
 
   .station-list-form {
-      &__list {
-          margin-right: 10px;
+    &__list {
+      margin-right: 10px;
+    }
+  }
+
+  .line-list {
+    list-style: none;
+    margin-left: 0;
+    &__item {
+      margin-bottom: 0
+    }
+    &__color {
+      content: "";
+      position: relative;
+      top: 2px;
+      margin-left: 10px;
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border: 1px solid black;
+
+      &.route-1 {
+        background: yellow;
       }
+    }
   }
 }

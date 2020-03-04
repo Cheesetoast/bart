@@ -1,48 +1,33 @@
 import React, { useState, useEffect } from "react"
 import StationListForm from "./StationListForm"
 import Results from "./Results"
+import Utils from "./Utils"
 import _ from "lodash"
 
 import "./bart.scss"
 
-const CONSTANTS = {
-  BART: {
-    APIKEY: "MW9S-E7SL-26DU-VV8V",
-    BASEURL: {
-      STATION: "https://api.bart.gov/api/etd.aspx?cmd=etd&",
-      DEPART: "https://api.bart.gov/api/sched.aspx?cmd=depart&b=0&",
-    },
-  },
-}
+const CONSTANTS = Utils.CONSTANTS
 
 const Bart = () => {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [bartData, setBartData] = useState([])
   const [stationList, setStationList] = useState([])
-  const [selectedStartStation, setSelectedStartStation] = useState(4)
-  const [selectedDestStation, setSelectedDestStation] = useState(7)
-  const [urlQuery, setUrlQuery] = useState(
-    "https://api.bart.gov/api/sched.aspx?cmd=depart&b=0&orig=phil&dest=bayf&key=MW9S-E7SL-26DU-VV8V&json=y"
-  )
+  const [routeData, setRouteData] = useState([])
+  const [urlQuery, setUrlQuery] = useState(CONSTANTS.BART.INITIAL_URL)
+  const [selectedStations, setSelectedStations] = useState({
+    startStation: 4,
+    destStation: 7,
+  })
 
-  const updateUrlQuery = (
-    stationList,
-    selectedStartStation,
-    selectedDestStation
-  ) => {
+  const updateUrlQuery = (stationList, selectedStations) => {
     stationList.length > 0 &&
       setUrlQuery(
-        `${CONSTANTS.BART.BASEURL.DEPART}orig=${stationList[selectedStartStation].abbr}&dest=${stationList[selectedDestStation].abbr}&key=${CONSTANTS.BART.APIKEY}&json=y`
+        `${CONSTANTS.BART.BASE_URL.DEPART}orig=${
+          stationList[selectedStations.startStation].abbr
+        }&dest=${stationList[selectedStations.destStation].abbr}&key=${
+          CONSTANTS.BART.API_KEY
+        }&json=y`
       )
-  }
-
-  const getStationName = value => {
-    const criteria = { abbr: value }
-    const key = Object.keys(criteria)[0]
-
-    return stationList.find(function(elem) {
-      return elem[key] === criteria[key]
-    }).name
   }
 
   const fetchData = (url, hook, objPath) => {
@@ -52,7 +37,7 @@ const Bart = () => {
       .then(res => res.json())
       .then(
         result => {
-          hook(_.get(result, objPath))
+          hook(_.get(result, `root.${objPath}`))
           setIsLoading(false)
         },
         error => {
@@ -61,39 +46,42 @@ const Bart = () => {
       )
   }
 
-  const updateSelectedStation = (e, isStartingStation) => {
-    const station = e.target.value
-    isStartingStation
-      ? setSelectedStartStation(station)
-      : setSelectedDestStation(station)
-  }
+  // --- USE EFFECTS ---
 
+  // Update url query
   useEffect(() => {
-    console.log("fetchStationlist")
+    updateUrlQuery(stationList, selectedStations)
+  }, [stationList, selectedStations])
+
+  // Fetch stationData
+  useEffect(() => {
     fetchData(
-      `https://api.bart.gov/api/stn.aspx?cmd=stns&key=${CONSTANTS.BART.APIKEY}&json=y`,
+      `https://api.bart.gov/api/stn.aspx?cmd=stns&key=${CONSTANTS.BART.API_KEY}&json=y`,
       setStationList,
-      "root.stations.station"
+      "stations.station"
     )
   }, [])
 
+  // Fetch bartData
   useEffect(() => {
-      console.log("updateUrlQuery")
-    updateUrlQuery(stationList, selectedStartStation, selectedDestStation)
-  }, [stationList, selectedStartStation, selectedDestStation])
-
-  useEffect(() => {
-    console.log("fetchBartData")
-    fetchData(urlQuery, setBartData, "root.schedule.request.trip")
+    fetchData(urlQuery, setBartData, "schedule.request.trip")
   }, [urlQuery])
+
+  // Fetch routeData
+  useEffect(() => {
+    fetchData(
+      `https://api.bart.gov/api/route.aspx?cmd=routes&key=${CONSTANTS.BART.API_KEY}&json=y`,
+      setRouteData,
+      "routes.route"
+    )
+  }, [])
 
   return (
     <div className="bart">
       <StationListForm
         stationList={stationList}
-        onSelect={updateSelectedStation}
-        selectedStartStation={selectedStartStation}
-        selectedDestStation={selectedDestStation}
+        selectedStations={selectedStations}
+        onClick={setSelectedStations}
       />
 
       {isLoading ? (
@@ -104,7 +92,11 @@ const Bart = () => {
           alt="Loading..."
         />
       ) : (
-        bartData && <Results data={bartData} getStationName={getStationName} />
+        <Results
+          data={bartData}
+          routeData={routeData}
+          stationList={stationList}
+        />
       )}
     </div>
   )

@@ -1,25 +1,34 @@
-import React from "react"
+import React, { useState } from "react"
 import StationList from "./StationList"
 
-const StationListForm = ({
-  stationList,
-  onSelect,
-  selectedStartStation,
-  selectedDestStation,
-}) => {
+const StationListForm = ({ stationList, selectedStations, onClick }) => {
+  const [startStation, setStartStation] = useState(
+    selectedStations.startStation
+  )
+  const [destStation, setDestStation] = useState(selectedStations.destStation)
+
   return (
     <form className="station-list-form">
       <StationList
         stationList={stationList}
-        onSelect={onSelect}
-        selected={selectedDestStation}
-        isStart
+        onSelect={setStartStation}
+        current={startStation}
+        unavailable={destStation}
       />
       <StationList
         stationList={stationList}
-        onSelect={onSelect}
-        selected={selectedStartStation}
+        onSelect={setDestStation}
+        current={destStation}
+        unavailable={startStation}
       />
+      <button
+        onClick={e => {
+          e.preventDefault()
+          onClick({ startStation, destStation })
+        }}
+      >
+        Go
+      </button>
     </form>
   )
 }
