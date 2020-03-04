@@ -46,6 +46,8 @@ const Bart = () => {
       )
   }
 
+  console.log(bartData)
+
   // --- USE EFFECTS ---
 
   // Update url query
@@ -93,7 +95,7 @@ const Bart = () => {
         />
       ) : (
         <Results
-          data={bartData}
+          bartData={bartData}
           routeData={routeData}
           stationList={stationList}
         />

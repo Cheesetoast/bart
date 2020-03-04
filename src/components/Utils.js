@@ -28,13 +28,13 @@ const Utils = {
       .join("-")
   },
 
-  findInObj: (searchValue, obj, objKey, returnValue) => {
-    const criteria = { [objKey]: searchValue }
+  findInObj: (objValue, obj, objKey, searchKey) => {
+    const criteria = { [objKey]: objValue }
     const key = Object.keys(criteria)[0]
 
     return obj.find(function(elem) {
       return elem[key] === criteria[key]
-    })[returnValue]
+    })[searchKey]
   },
 }
 
