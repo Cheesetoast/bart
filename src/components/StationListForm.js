@@ -7,6 +7,13 @@ const StationListForm = ({ stationList, selectedStations, onClick }) => {
   )
   const [destStation, setDestStation] = useState(selectedStations.destStation)
 
+  const saveStations = () => {
+    localStorage.setItem(
+      "savedStations",
+      JSON.stringify({ startStation, destStation })
+    )
+  }
+
   return (
     <form className="station-list-form">
       <StationList
@@ -24,6 +31,7 @@ const StationListForm = ({ stationList, selectedStations, onClick }) => {
       <button
         onClick={e => {
           e.preventDefault()
+          saveStations()
           onClick({ startStation, destStation })
         }}
       >

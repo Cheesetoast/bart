@@ -9,15 +9,16 @@ import "./bart.scss"
 const CONSTANTS = Utils.CONSTANTS
 
 const Bart = () => {
+  const defaultStations = JSON.parse(localStorage.getItem("savedStations")) || {
+    startStation: 4,
+    destStation: 7,
+  }
   const [isLoading, setIsLoading] = useState(false)
   const [bartData, setBartData] = useState([])
   const [stationList, setStationList] = useState([])
   const [routeData, setRouteData] = useState([])
   const [urlQuery, setUrlQuery] = useState(CONSTANTS.BART.INITIAL_URL)
-  const [selectedStations, setSelectedStations] = useState({
-    startStation: 4,
-    destStation: 7,
-  })
+  const [selectedStations, setSelectedStations] = useState(defaultStations)
 
   const updateUrlQuery = (stationList, selectedStations) => {
     stationList.length > 0 &&
