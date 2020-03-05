@@ -8,6 +8,7 @@ const Utils = {
       },
       INITIAL_URL:
         "https://api.bart.gov/api/sched.aspx?cmd=depart&b=0&orig=phil&dest=bayf&key=MW9S-E7SL-26DU-VV8V&json=y",
+      LOCAL_STORAGE_ID: "savedStations"
     },
   },
   formatTime: num => {

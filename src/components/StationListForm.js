@@ -1,5 +1,8 @@
 import React, { useState } from "react"
 import StationList from "./StationList"
+import Utils from "./Utils"
+
+const CONSTANTS = Utils.CONSTANTS
 
 const StationListForm = ({ stationList, selectedStations, onClick }) => {
   const [startStation, setStartStation] = useState(
@@ -9,7 +12,7 @@ const StationListForm = ({ stationList, selectedStations, onClick }) => {
 
   const saveStations = () => {
     localStorage.setItem(
-      "savedStations",
+      CONSTANTS.BART.LOCAL_STORAGE_ID,
       JSON.stringify({ startStation, destStation })
     )
   }

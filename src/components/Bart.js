@@ -9,7 +9,7 @@ import "./bart.scss"
 const CONSTANTS = Utils.CONSTANTS
 
 const Bart = () => {
-  const defaultStations = JSON.parse(localStorage.getItem("savedStations")) || {
+  const defaultStations = JSON.parse(localStorage.getItem(CONSTANTS.BART.LOCAL_STORAGE_ID)) || {
     startStation: 4,
     destStation: 7,
   }
@@ -46,8 +46,6 @@ const Bart = () => {
         }
       )
   }
-
-  console.log(bartData)
 
   // --- USE EFFECTS ---
 
